@@ -2,14 +2,36 @@ import 'package:flutter/widgets.dart';
 
 import 'transitions.dart';
 
-mixin ReorderableMixin {
-  @protected
+abstract class BaseReorderableMixin {
   Widget makeAppearingWidget(
-    Widget child,
-    AnimationController entranceController,
-    Size? draggingFeedbackSize,
-    Axis direction,
-  ) {
+      Widget child,
+      AnimationController entranceController,
+      Size? draggingFeedbackSize,
+      Axis direction,
+      {int? index}
+      );
+
+  Widget makeDisappearingWidget(
+      Widget child,
+      AnimationController ghostController,
+      Size? draggingFeedbackSize,
+      Axis direction,
+      {int? index}
+      );
+
+  double getDraggingOpacity();
+}
+
+mixin ReorderableMixin implements BaseReorderableMixin {
+
+  @override
+  Widget makeAppearingWidget(
+      Widget child,
+      AnimationController entranceController,
+      Size? draggingFeedbackSize,
+      Axis direction,
+      {int? index}
+      ) {
     if (null == draggingFeedbackSize) {
       return SizeTransitionWithIntrinsicSize(
         sizeFactor: entranceController,
@@ -32,11 +54,13 @@ mixin ReorderableMixin {
   }
 
   @protected
+  @override
   Widget makeDisappearingWidget(
       Widget child,
       AnimationController ghostController,
       Size? draggingFeedbackSize,
       Axis direction,
+      {int? index}
       ) {
     if (null == draggingFeedbackSize) {
       return SizeTransitionWithIntrinsicSize(
@@ -59,5 +83,9 @@ mixin ReorderableMixin {
       return ConstrainedBox(
           constraints: contentSizeConstraints, child: transition);
     }
+  }
+
+  double getDraggingOpacity() {
+    return 0.2;
   }
 }
